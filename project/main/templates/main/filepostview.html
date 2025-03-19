@@ -6,22 +6,11 @@
     <form method="POST" action="{% url 'filepostview' %}" id="download-form" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required> <br> <br>
-
+        <input type="text" id="title" name="title"> <br><br>
         <label for="file">File:</label>
-        <input type="file" id="file" name="file" required> <br> <br>
-
+        <input type="file" id="file" name="file"> <br><br>
         <label for="text">Text: </label>
-        <textarea id="text" name="data" rows="50" cols="80" required></textarea> <br> <br>
-
-        <div class="upload-status">
-            <div class="progress-bar" style="display: none;">
-                <div class="progress"></div>
-                <span class="progress-text">0%</span>
-            </div>
-            <div class="status-message"></div>
-        </div>
-
+        <textarea id="text" name="data" rows="50" cols="80"></textarea> <br><br>
         <button type="submit" id="submit-btn">
             <span class="btn-text">Загрузить</span>
             <div class="loader d-none"></div>
@@ -29,95 +18,34 @@
     </form>
 </div>
 
-<style>
-    .progress-bar {
-        width: 300px;
-        height: 20px;
-        background: #f0f0f0;
-        border-radius: 10px;
-        margin: 10px auto;
-        position: relative;
-    }
-
-    .progress {
-        width: 0%;
-        height: 100%;
-        background: #4CAF50;
-        border-radius: 10px;
-        transition: width 0.3s ease;
-    }
-
-    .progress-text {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        color: #333;
-    }
-
-    .status-message {
-        margin: 10px 0;
-        color: #666;
-    }
-</style>
-
 <script>
 document.getElementById('download-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const form = e.target;
-    const formData = new FormData(form);
-    const progressBar = document.querySelector('.progress');
-    const progressText = document.querySelector('.progress-text');
-    const statusMessage = document.querySelector('.status-message');
-    const submitBtn = document.getElementById('submit-btn');
-    const loader = document.querySelector('.loader');
-    document.querySelector('.progress-bar').style.display = 'block';
-    submitBtn.disabled = true;
-    loader.classList.remove('d-none');
-    statusMessage.textContent = 'Начало загрузки...';
+    var formData = new FormData(this);
 
-    const xhr = new XMLHttpRequest();
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', this.action, true);
     xhr.upload.addEventListener('progress', function(e) {
         if (e.lengthComputable) {
-            const percent = Math.round((e.loaded / e.total) * 100);
-            progressBar.style.width = percent + '%';
-            progressText.textContent = percent + '%';
+            var percent = (e.loaded / e.total) * 100;
+            console.log('Загружено: ' + percent.toFixed(2) + '%');
         }
     });
-    xhr.addEventListener('load', function() {
+
+    xhr.onload = function() {
         if (xhr.status === 200) {
-            statusMessage.textContent = 'Загрузка успешно завершена!';
-            setTimeout(() => {
-                window.location.reload();
-            }, 1500);
+            console.log('Файл успешно загружен');
         } else {
-            statusMessage.textContent = 'Ошибка: ' + xhr.statusText;
+            console.error('Ошибка загрузки: ' + xhr.statusText);
         }
-        resetUI();
-    });
-    xhr.addEventListener('error', function() {
-        statusMessage.textContent = 'Ошибка соединения. Попробуйте ещё раз.';
-        resetUI();
-    });
-    xhr.addEventListener('abort', function() {
-        statusMessage.textContent = 'Загрузка отменена.';
-        resetUI();
-    });
+    };
 
-    xhr.open('POST', form.action);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.onerror = function() {
+        console.error('Ошибка соединения');
+    };
+
     xhr.send(formData);
-
-    function resetUI() {
-        submitBtn.disabled = false;
-        loader.classList.add('d-none');
-        progressBar.style.width = '0%';
-        progressText.textContent = '0%';
-        setTimeout(() => {
-            document.querySelector('.progress-bar').style.display = 'none';
-        }, 3000);
-    }
 });
 </script>
 
