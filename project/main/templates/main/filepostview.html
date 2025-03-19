@@ -1,52 +1,54 @@
 {% extends "main/base2ch.html" %}
-{% block title %} NE2ch {% endblock %}
+{% block title %}NE2ch{% endblock %}
 {% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css" integrity="sha512-y5J2S4nqpoaLyH+e0egIrhXjhkfdXQJp5evOLKJ3UO8vzo53F70q5zT7EUVyuOhb8Gjq+BeAEPFyfjZq6v8M5A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js" integrity="sha512-qUJfjC5zMTSnQ2Ij+4gDz/dF7/Qv5lMLrlT6GfkkOfaI42u7C8H+3flKkAaNm3CeyEhSMwOsP+uyzHXnCIn9Mw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <div style="text-align: center">
-    <form method="POST" action="{% url 'filepostview' %}" id="download-form" enctype="multipart/form-data">
+    <form action="{% url 'filepostview' %}" method="POST" enctype="multipart/form-data" class="dropzone" id="my-dropzone">
         {% csrf_token %}
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title"> <br><br>
-        <label for="file">File:</label>
-        <input type="file" id="file" name="file"> <br><br>
-        <label for="text">Text: </label>
-        <textarea id="text" name="data" rows="50" cols="80"></textarea> <br><br>
-        <button type="submit" id="submit-btn">
-            <span class="btn-text">Загрузить</span>
-            <div class="loader d-none"></div>
-        </button>
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="text">Text:</label>
+            <textarea id="text" name="data" rows="5" class="form-control"></textarea>
+        </div>
+        <div class="fallback">
+            <input name="file" type="file" multiple />
+        </div>
     </form>
 </div>
 
 <script>
-document.getElementById('download-form').addEventListener('submit', function(e) {
-    e.preventDefault();
+Dropzone.options.myDropzone = {
+    paramName: "file",
+    maxFilesize: 50,
+    uploadMultiple: false,
+    parallelUploads: 1,
+    autoProcessQueue: true,
+    init: function() {
+        var myDropzone = this;
 
-    var formData = new FormData(this);
+        this.on("sending", function(file, xhr, formData) {
+            formData.append("title", document.getElementById("title").value);
+            formData.append("data", document.getElementById("text").value);
+        });
 
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', this.action, true);
-    xhr.upload.addEventListener('progress', function(e) {
-        if (e.lengthComputable) {
-            var percent = (e.loaded / e.total) * 100;
-            console.log('Загружено: ' + percent.toFixed(2) + '%');
-        }
-    });
+        this.on("uploadprogress", function(file, progress, bytesSent) {
+            console.log("Прогресс загрузки: " + progress.toFixed(2) + "%");
+        });
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            console.log('Файл успешно загружен');
-        } else {
-            console.error('Ошибка загрузки: ' + xhr.statusText);
-        }
-    };
+        this.on("success", function(file, response) {
+            console.log("Файл успешно загружен");
+        });
 
-    xhr.onerror = function() {
-        console.error('Ошибка соединения');
-    };
-
-    xhr.send(formData);
-});
+        this.on("error", function(file, errorMessage) {
+            console.error("Ошибка загрузки файла: " + errorMessage);
+        });
+    }
+};
 </script>
 
 {% endblock %}
