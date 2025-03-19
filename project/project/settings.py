@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-cs1d62823!!jg0%(zuu_9)5(qi*9x*^9m9z7c#@1w2+^r=!%ut
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['http://steblan.online:8000', 'localhost']
 
 
 # Application definition
@@ -126,4 +126,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://steblan.online:8000']
