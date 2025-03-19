@@ -1,0 +1,11 @@
+{% extends "main/base2ch.html" %}
+{% block title %} NE2ch {% endblock %}
+{% block content %}
+
+<h2>{{file.title}}</h2>
+{% if is_File %} <a href="{{file.content.url}}">{{file.content.url}}<br> <br> <br></a>
+{% else %}
+{% endif %}
+<textarea rows="50" cols="80"> {{ file.content_text }} </textarea>
+
+{% endblock %}

@@ -1,0 +1,9 @@
+<!-- <form method="POST" action="{% url 'filedown' %}" id="download-form">
+        {% csrf_token %}
+        <label style="font-family: 'Open Sans'" for="url">URL треда:</label>
+        <input type="text" id="url" name="url" placeholder="https://example.com#threadname" required>
+        <button style="font-family: 'Open Sans'" type="submit" id="submit-btn">
+            <span class="btn-text" >Скачать</span>
+            <div class="loader d-none"></div>
+        </button>
+    </form> -->

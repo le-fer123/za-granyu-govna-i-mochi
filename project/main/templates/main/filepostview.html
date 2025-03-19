@@ -1,0 +1,21 @@
+{% extends "main/base2ch.html" %}
+{% block title %} NE2ch {% endblock %}
+{% block content %}
+
+<div style="text-align-all: center">
+    <form method="POST" action="{% url 'filepostview' %}" id="download-form" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title"> <br> <br>
+        <label for="file">File:</label>
+        <input type="file" id="file" name="file"> <br> <br>
+        <label for="text">Text: </label>
+        <textarea id="text" name="data" rows="50" cols="80"></textarea> <br> <br>
+        <button type="submit" id="submit-btn">
+            <span class="btn-text">Загрузить</span>
+            <div class="loader d-none"></div>
+        </button>
+    </form>
+</div>
+
+{% endblock %}
